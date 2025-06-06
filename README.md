@@ -15,7 +15,7 @@
     ```
     The program will load the generated map, attempt to find a path from (0,0) to (99,99) (default), display the path details, and save a full visualization to `paths/path_visualization.txt`.
 
-Configuration
+### Configuration
 
 You can modify the following settings within `main.py` and `generate_map_file.py` to customize the program's behavior:
 
