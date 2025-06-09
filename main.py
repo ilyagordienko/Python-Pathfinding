@@ -1,15 +1,15 @@
 import os
-from collections import Counter  # Now correctly used for path cell counting
+from collections import Counter
 from typing import List
 
 from src.a_star import AStarPathfinder
-from src.environment import SYMBOL_TO_ENVIRONMENT
+from src.environment import SYMBOL_TO_ENVIRONMENT, GROUND_SYMBOL, MUD_SYMBOL, WATER_SYMBOL, ROCK_SYMBOL, TREE_SYMBOL
 from src.grid import Grid, find_nearest_non_obstacle_cell
+from src.visualize_grid_map import generate_grid_image_with_images  # ADDED: Import the visualization function
 
 
 def load_map_from_file(filepath: str) -> List[List[str]]:
-    # Loads map data from a txt file.
-
+    """Loads map data from a txt file."""
     if not os.path.exists(filepath):
         raise FileNotFoundError(f"Map file not found at '{filepath}'")
 
@@ -24,12 +24,12 @@ def load_map_from_file(filepath: str) -> List[List[str]]:
 
 # Path Output Configuration
 output_path_dir = "paths"
+# This will still use the project_root, which we will calculate for output files
 output_path_filename = os.path.join(output_path_dir, "path_visualization.txt")
 
 
 def save_path_to_file(grid_representation: str, filepath: str):
-    # Saves the grid with the path to a txt file.
-
+    """Saves the grid with the path to a txt file."""
     os.makedirs(os.path.dirname(filepath), exist_ok=True)
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(grid_representation)
@@ -40,23 +40,40 @@ def main():
     print("Pathfinding...")
 
     #  1. Configuration
-    map_file = "maps/map.txt"
+    # *** CRITICAL CHANGE HERE: USE THE FULL ABSOLUTE PATH TO YOUR MAP.TXT ***
+    # Replace 'C:/Programming/Python/navigation_grid/maps/map.txt' with the actual absolute path on your system.
+    map_file_absolute_path = r"C:\Programming\Python\navigation_grid\maps\map.txt"
+    # Note: Use a raw string (r"...") or double backslashes (C:\\...) for Windows paths.
+
     start_coord = (0, 0)
     end_coord = (99, 99)
 
+    # Define the mapping from environment symbols to image filenames
+    # Ensure these image files are in the 'images' folder at the project root
+    image_mapping = {
+        GROUND_SYMBOL: 'ground10x10.png',
+        MUD_SYMBOL: 'mud10x10.png',
+        WATER_SYMBOL: 'water10x10.png',
+        ROCK_SYMBOL: 'rock10x10.png',
+        TREE_SYMBOL: 'tree10x10.png'
+    }
+
     #  2. Load Map and Create Grid
     try:
-        map_data = load_map_from_file(map_file)
+        # Now, we directly use the absolute path for loading the map
+        full_map_filepath = map_file_absolute_path
+
+        map_data = load_map_from_file(full_map_filepath)
         grid = Grid(map_data, SYMBOL_TO_ENVIRONMENT)
-        print(f"Map loaded successfully from '{map_file}'. Dimensions: {grid.width}x{grid.height}\n")
+        print(f"Map loaded successfully from '{full_map_filepath}'. Dimensions: {grid.width}x{grid.height}\n")
     except (FileNotFoundError, ValueError) as e:
         print(f"Error loading map: {e}")
         print("Please ensure 'generate_map_file.py' has been run to create 'map.txt'.")
         return
 
-    #  3. Display Grid
+    #  3. Display Grid (console print)
     print("Initial Grid:")
-    grid.print_grid()  # This is now correctly defined in grid.py
+    grid.print_grid()
 
     #  4. Validate and Adjust Start/End Points if on Obstacles
     start_x, start_y = start_coord
@@ -131,16 +148,27 @@ def main():
             print(f"  {count} {name} cells were used in the path.")
         print("-" * 30)
 
-        #  Visualize and Save the path on the grid
-        print("\n Grid with Path:")
+        #  Visualize and Save the path on the grid (console print)
+        print("\nGrid with Path (console view):")
         grid.print_grid_with_path(path, sample_size=None)  # Pass None to ensure full print
 
-        # Save to file
+        # Save console representation to file
         full_path_grid_string = grid.render_grid_with_path(path)
-        save_path_to_file(full_path_grid_string, output_path_filename)
+
+        # We still need project_root for output paths like path_visualization.txt and image files
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.dirname(script_dir)  # This should correctly get navigation_grid's root
+        full_output_path_filepath = os.path.join(project_root, output_path_filename)
+        save_path_to_file(full_path_grid_string, full_output_path_filepath)
+
+        print("\nGenerating visual map images...")
+
+        generate_grid_image_with_images(grid, image_mapping, output_filename='plain_grid_map.png')
+
+        generate_grid_image_with_images(grid, image_mapping, path=path, output_filename='grid_with_path_map.png')
 
     else:
-        print("No path found between the specified start and end cells.")
+        print("No path found between the start and end cells.")
         print("This could be due to obstacles, disconnected areas, or unreachable target.")
         print("Check environment definitions, map content, or start/end points.")
 
