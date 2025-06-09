@@ -24,7 +24,6 @@ def load_map_from_file(filepath: str) -> List[List[str]]:
 
 # Path Output Configuration
 output_path_dir = "paths"
-# This will still use the project_root, which we will calculate for output files
 output_path_filename = os.path.join(output_path_dir, "path_visualization.txt")
 
 
@@ -40,16 +39,10 @@ def main():
     print("Pathfinding...")
 
     #  1. Configuration
-    # *** CRITICAL CHANGE HERE: USE THE FULL ABSOLUTE PATH TO YOUR MAP.TXT ***
-    # Replace 'C:/Programming/Python/navigation_grid/maps/map.txt' with the actual absolute path on your system.
     map_file_absolute_path = r"C:\Programming\Python\navigation_grid\maps\map.txt"
-    # Note: Use a raw string (r"...") or double backslashes (C:\\...) for Windows paths.
-
     start_coord = (0, 0)
     end_coord = (99, 99)
 
-    # Define the mapping from environment symbols to image filenames
-    # Ensure these image files are in the 'images' folder at the project root
     image_mapping = {
         GROUND_SYMBOL: 'ground10x10.png',
         MUD_SYMBOL: 'mud10x10.png',
@@ -60,7 +53,6 @@ def main():
 
     #  2. Load Map and Create Grid
     try:
-        # Now, we directly use the absolute path for loading the map
         full_map_filepath = map_file_absolute_path
 
         map_data = load_map_from_file(full_map_filepath)
@@ -71,7 +63,7 @@ def main():
         print("Please ensure 'generate_map_file.py' has been run to create 'map.txt'.")
         return
 
-    #  3. Display Grid (console print)
+    #  3. Display Grid (console)
     print("Initial Grid:")
     grid.print_grid()
 
@@ -79,7 +71,6 @@ def main():
     start_x, start_y = start_coord
     end_x, end_y = end_coord
 
-    # Find the actual Cell objects
     start_cell_original = grid.get_cell(start_x, start_y)
     end_cell_original = grid.get_cell(end_x, end_y)
 
@@ -135,7 +126,6 @@ def main():
             print(f"  {path[0]} -> ... -> {path[-1]}")
             print(f"  Total steps: {len(path)}")  # Keeps this useful info
         else:
-            # If the path is short, print all cells
             print("  " + " -> ".join(str(cell) for cell in path))
 
         # Count and display cell types used in the path
@@ -148,16 +138,13 @@ def main():
             print(f"  {count} {name} cells were used in the path.")
         print("-" * 30)
 
-        #  Visualize and Save the path on the grid (console print)
         print("\nGrid with Path (console view):")
         grid.print_grid_with_path(path, sample_size=None)  # Pass None to ensure full print
 
-        # Save console representation to file
         full_path_grid_string = grid.render_grid_with_path(path)
 
-        # We still need project_root for output paths like path_visualization.txt and image files
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.dirname(script_dir)  # This should correctly get navigation_grid's root
+        project_root = os.path.dirname(script_dir)
         full_output_path_filepath = os.path.join(project_root, output_path_filename)
         save_path_to_file(full_path_grid_string, full_output_path_filepath)
 
