@@ -39,7 +39,7 @@ def main():
     print("Pathfinding...")
 
     #  1. Configuration
-    map_file_absolute_path = r"C:\Programming\Python\navigation_grid\maps\map.txt"
+    map_file_relative_path = os.path.join("maps", "map.txt")
     start_coord = (0, 0)
     end_coord = (99, 99)
 
@@ -53,7 +53,10 @@ def main():
 
     #  2. Load Map and Create Grid
     try:
-        full_map_filepath = map_file_absolute_path
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = script_dir  # project root
+
+        full_map_filepath = os.path.join(project_root, map_file_relative_path)
 
         map_data = load_map_from_file(full_map_filepath)
         grid = Grid(map_data, SYMBOL_TO_ENVIRONMENT)
@@ -142,17 +145,15 @@ def main():
 
         full_path_grid_string = grid.render_grid_with_path(path)
 
-        base_output_dir = os.path.dirname(map_file_absolute_path)
-        full_output_path_filepath = os.path.join(os.path.dirname(base_output_dir), output_path_filename)
+        full_output_path_filepath = os.path.join(project_root, output_path_filename)
         save_path_to_file(full_path_grid_string, full_output_path_filepath)
 
         print("\nGenerating visual map images...")
 
-        image_output_base_dir = os.path.dirname(base_output_dir)
         generate_grid_image_with_images(grid, image_mapping,
-                                        output_filename=os.path.join(image_output_base_dir, 'plain_grid_map.png'))
+                                        output_filename=os.path.join(project_root, 'plain_grid_map.png'))
         generate_grid_image_with_images(grid, image_mapping, path=path,
-                                        output_filename=os.path.join(image_output_base_dir, 'grid_with_path_map.png'))
+                                        output_filename=os.path.join(project_root, 'grid_with_path_map.png'))
 
     else:
         print("No path found between the start and end cells.")
