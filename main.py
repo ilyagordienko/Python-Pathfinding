@@ -120,7 +120,6 @@ def main():
     #  6. Display Results
     if path:
         print(f"Path found! Total cost: {path[-1].g_score:.2f}")
-        # Path coordinates display (simplified as requested)
         print("Path coordinates:")
         if len(path) > 2:
             print(f"  {path[0]} -> ... -> {path[-1]}")
@@ -143,16 +142,13 @@ def main():
 
         full_path_grid_string = grid.render_grid_with_path(path)
 
-        # Use the base directory of the absolute map path for output files
         base_output_dir = os.path.dirname(map_file_absolute_path)
-        # Construct the full path for path_visualization.txt relative to the navigation_grid folder
         full_output_path_filepath = os.path.join(os.path.dirname(base_output_dir), output_path_filename)
         save_path_to_file(full_path_grid_string, full_output_path_filepath)
 
         print("\nGenerating visual map images...")
 
-        # Use the base directory of the absolute map path for output images
-        image_output_base_dir = os.path.dirname(base_output_dir)  # This should be 'navigation_grid'
+        image_output_base_dir = os.path.dirname(base_output_dir)
         generate_grid_image_with_images(grid, image_mapping,
                                         output_filename=os.path.join(image_output_base_dir, 'plain_grid_map.png'))
         generate_grid_image_with_images(grid, image_mapping, path=path,
