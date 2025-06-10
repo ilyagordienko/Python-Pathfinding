@@ -25,14 +25,14 @@ def generate_grid_image_with_images(grid, image_paths: Dict[str, str], path: Opt
 
     loaded_images = {}
     for symbol, img_filename in image_paths.items():
-        image_full_path = os.path.join(images_dir, img_filename)  # Moved assignment outside try block
+        image_full_path = os.path.join(images_dir, img_filename)
         try:
             loaded_images[symbol] = Image.open(image_full_path).resize((cell_size, cell_size))
         except FileNotFoundError as e:
             print(
                 f'Error: Image file not found for symbol "{symbol}" at "{image_full_path}":'
                 f' {e}. This terrain type will use default gray.')
-            loaded_images[symbol] = None  # Mark as missing or problematic
+            loaded_images[symbol] = None
         except Exception as e:
             print(f'Error loading image for symbol "{symbol}" from "{image_full_path}": {e}. Using default gray.')
             loaded_images[symbol] = None
@@ -53,7 +53,7 @@ def generate_grid_image_with_images(grid, image_paths: Dict[str, str], path: Opt
                     if symbol not in image_paths:
                         print(
                             f'Warning: No image path provided for terrain symbol "{symbol}". Drawing default gray.')
-                    draw.rectangle([x1, y1, x1 + cell_size, y1 + cell_size], fill=(128, 128, 128))  # Default gray
+                    draw.rectangle([x1, y1, x1 + cell_size, y1 + cell_size], fill=(128, 128, 128))  # gray
             else:
                 print(f"Warning: Cell at ({c},{r}) is None. Drawing default gray.")
                 draw.rectangle([c * cell_size, r * cell_size, (c + 1) * cell_size, (r + 1) * cell_size],
@@ -62,7 +62,7 @@ def generate_grid_image_with_images(grid, image_paths: Dict[str, str], path: Opt
     # draw the path
     if path:
         path_color = (255, 165, 0)  # Orange for the path
-        path_dot_radius = 3  # Size of the orange circle
+        path_dot_radius = 3
 
         for cell in path:
             if (grid.start_node and cell.coords == grid.start_node.coords) or \
