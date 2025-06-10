@@ -1,5 +1,7 @@
 # Python-Pathfinding
 
+This project implements a Pathfinding Visualization Tool using the A* search algorithm. It generates random grid-based maps with various terrain types (ground, mud, water, rock, tree), each assigned a specific movement cost or designated as an impassable obstacle. The core functionality includes finding the shortest path between a user-defined start and end point, adjusting these points if they fall on obstacles to ensure a valid path search. The project provides both console-based visualization of the path on the grid and generates graphical images by replacing map symbols with corresponding terrain images.
+
 ## Running the Program
 
 1.  **Generate a new map:**
@@ -20,7 +22,7 @@
     * Save a full text visualization of the path to `paths/path_visualization.txt`.
     * Generate and save two image files in the root directory:
         * `plain_grid_map.png`: A visual representation of the generated grid map.
-        * `grid_with_path_map.png`: A visual representation of the grid with the found path overlaid.
+        * `grid_with_path_map.png`: A visual representation of the grid with the found path on it.
 
 ## Configuration
 
